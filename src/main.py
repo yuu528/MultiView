@@ -1,10 +1,10 @@
 import sys
-import libm2k
 from PyQt5 import QtWidgets, uic
 from widget.scope import ScopeWidget
 import pyqtgraph as pg
 
 from panel import Panel
+from worker.m2k import M2kWorker
 
 class Main(QtWidgets.QWidget):
     def __init__(self):
@@ -25,8 +25,8 @@ class Main(QtWidgets.QWidget):
         self.mainbar_combo.currentIndexChanged.connect(self.change_mode)
 
         # connect to m2k
-        self.m2kdev = libm2k.m2kOpen()
-        if self.m2kdev is None:
+        self.m2k = M2kWorker(1, 1000, rate_in=100e3)
+        if not self.m2k.ready:
             msg = QtWidgets.QMessageBox()
             msg.setWindowTitle('Error 01')
             msg.setIcon(QtWidgets.QMessageBox.Critical)
@@ -35,30 +35,20 @@ class Main(QtWidgets.QWidget):
             msg.exec_()
             exit()
 
-        self.m2kain = self.m2kdev.getAnalogIn()
-        self.m2kaout = self.m2kdev.getAnalogOut()
-        self.m2katrig = self.m2kain.getTrigger()
-
-        # calibrate
-        self.m2kain.reset()
-        self.m2kaout.reset()
-        self.m2kdev.calibrateADC()
-        self.m2kdev.calibrateDAC()
-
-        # m2k settings
-        self.m2kain.enableChannel(0, True)
-        self.m2kain.enableChannel(1, True)
-        self.m2kain.setSampleRate(100000)
+        self.m2k.start()
 
         # control panel
         self.panel = Panel(self)
 
         # get instances
         self.main_widget_ins = []
-        self.main_widget_ins.append(ScopeWidget(self, self.main_widget[0], self.panel, self.lang, self.m2kdev, self.m2kain, self.m2katrig))
+        self.main_widget_ins.append(ScopeWidget(self, self.main_widget[0], self.panel, self.lang, self.m2k))
+
+        self.send_control('show')
 
     def closeEvent(self, event):
         self.panel.close()
+        del self.main_widget_ins[0]
         event.accept()
 
     def showEvent(self, event):

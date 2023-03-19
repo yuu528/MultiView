@@ -3,24 +3,20 @@ from PyQt5 import QtWidgets
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore
 
-from worker import GetSamplesWorker
 from utils import Utils
 from langs import Langs
 
 class ScopeWidget():
-    def __init__(self, master, this, panel, lang, m2kdev, m2kain, m2katrig):
+    def __init__(self, master, this, panel, lang, m2k):
         super().__init__()
         self.panel = panel
-        self.m2kdev = m2kdev
-        self.m2kain = m2kain
-        self.m2katrig = m2katrig
         self.lang = lang
-        self.worker = None
+        self.m2k = m2k
 
         # const
         self.xdiv = 10
         self.ydiv = 8
-        self.samplerate = 100000
+        self.samplerate = self.m2k.rate_in
         self.langs = Langs(lang).get_all()
         self.MENU_NONE = 0
         self.MENU_CH1 = 1
@@ -156,9 +152,7 @@ class ScopeWidget():
         self.set_input_range(1)
 
         # run
-        self.worker = GetSamplesWorker(self.m2kain, self.m2katrig, self.trig_mode, self.samplecount, self.timer_interval_ms)
-        self.worker.plot.connect(self.plot)
-        self.run_acquisition()
+        self.m2k.acquired.connect(self.plot)
 
     def calc_numbers(self):
         self.xrange = [-self.tdivs[self.tdiv_index] * self.xdiv / 2, self.tdivs[self.tdiv_index] * self.xdiv / 2]
@@ -179,37 +173,32 @@ class ScopeWidget():
         self.update_htick()
 
     def run_acquisition(self):
-        if self.worker != None:
-            self.running = True
-            self.m2kain.startAcquisition(self.samplecount)
-            self.worker.set_loop(True)
-            self.worker.start()
+        self.running = True
+        self.m2k.set_loop(True)
+        self.m2k.set_enable_in(True)
 
     def stop_acquisition(self):
         self.running = False
-        self.m2kain.stopAcquisition()
-        self.worker.set_loop(False)
-        self.worker.quit()
+        self.m2k.set_loop(False)
 
-    def plot(self, ch1, ch2, samplecount, triggered):
-        if samplecount != 0:
-            if (not self.single_waiting) or (self.single_waiting and triggered):
-                x = np.linspace(self.xrange[0], self.xrange[1], num=samplecount)
-                ch1_array = np.array(ch1) + self.offset[0]
-                ch2_array = np.array(ch2) + self.offset[1]
-                if len(x) > len(ch1_array):
-                    ch1_array = np.append(ch1_array, np.full(len(x) - len(ch1_array), self.offset[0]))
-                    ch2_array = np.append(ch2_array, np.full(len(x) - len(ch2_array), self.offset[1]))
-                elif len(x) < len(ch1_array):
-                    ch1_array = np.delete(ch1_array, slice(len(x) - 1, len(ch1_array) - 1))
-                    ch2_array = np.delete(ch2_array, slice(len(x) - 1, len(ch2_array) - 1))
+    def plot(self, data, triggered):
+        if (not self.single_waiting) or (self.single_waiting and triggered):
+            x = np.linspace(self.xrange[0], self.xrange[1], num=len(data[0]))
+            ch1_array = np.array(data[0]) + self.offset[0]
+            ch2_array = np.array(data[1]) + self.offset[1]
+            if len(x) > len(ch1_array):
+                ch1_array = np.append(ch1_array, np.full(len(x) - len(ch1_array), self.offset[0]))
+                ch2_array = np.append(ch2_array, np.full(len(x) - len(ch2_array), self.offset[1]))
+            elif len(x) < len(ch1_array):
+                ch1_array = np.delete(ch1_array, slice(len(x) - 1, len(ch1_array) - 1))
+                ch2_array = np.delete(ch2_array, slice(len(x) - 1, len(ch2_array) - 1))
 
-                if self.enable_ch[0]:
-                    self.p1.plot(x=x, y=ch1_array, pen=self.colors[0], clear=True)
+            if self.enable_ch[0]:
+                self.p1.plot(x=x, y=ch1_array, pen=self.colors[0], clear=True)
 
-                if self.enable_ch[1]:
-                    self.p2.clear()
-                    self.p2.addItem(pg.PlotCurveItem(x=x, y=ch2_array, pen=self.colors[1]))
+            if self.enable_ch[1]:
+                self.p2.clear()
+                self.p2.addItem(pg.PlotCurveItem(x=x, y=ch2_array, pen=self.colors[1]))
 
         # to avoid chattering
         if self.trig_mode:
@@ -261,13 +250,10 @@ class ScopeWidget():
         self.p0.addItem(self.region)
         self.p1.setXRange(self.xrange[0], self.xrange[1], padding=0)
         self.p1axb.setTickSpacing(self.tdivs[self.tdiv_index] * self.xdiv / 2, self.tdivs[self.tdiv_index])
-        self.m2kdev.setTimeout(self.timer_interval_ms + 100)
-        self.m2kain.cancelAcquisition()
-        self.m2kain.startAcquisition(self.samplecount)
-        self.m2katrig.setAnalogDelay(int(-(self.tdivs[self.tdiv_index] * self.xdiv / 2 + self.hpos) * self.samplerate))
-        if self.worker != None:
-            self.worker.set_samplecount(self.samplecount)
-            self.worker.set_interval(int(self.timer_interval_ms + self.holdoff * 1000))
+        self.m2k.set_interval(self.timer_interval_ms)
+        self.m2k.set_timeout_in(self.timer_interval_ms + 100)
+        self.m2k.set_delay_trig(int(-(self.tdivs[self.tdiv_index] * self.xdiv / 2 + self.hpos) * self.samplerate))
+        self.m2k.set_count_in(self.samplecount)
 
     def on_triggered(self, triggered):
         if triggered:
@@ -283,7 +269,7 @@ class ScopeWidget():
     def set_trig_src(self, src=None):
         if src != None:
             self.trig_src = src
-            self.m2katrig.setAnalogSource(src)
+            self.m2k.src_trig(src)
 
         if self.now_menu == self.MENU_TRIG:
             self.scope_button[0].setText(self.langs['scope.source'] + '\n' + self.langs['scope.ch'] + str(self.trig_src + 1))
@@ -292,15 +278,11 @@ class ScopeWidget():
         self.update_vtick()
 
     def set_trig_mode(self, mode=None):
-        self.m2katrig.setAnalogMode(0, 1)
-        self.m2katrig.setAnalogMode(1, 1)
-
         if mode != None:
             self.trig_mode = mode
             self.triggered_count = 0
 
-        if self.worker != None:
-            self.worker.set_normal(self.trig_mode)
+        self.m2k.set_mode_trig(self.trig_mode)
 
         if self.now_menu == self.MENU_TRIG:
             self.scope_button[1].setText(self.langs['scope.mode'] + '\n' + self.langs['scope.mode_' + str(int(self.trig_mode))])
@@ -310,8 +292,8 @@ class ScopeWidget():
     def set_trig_cond(self, cond=None):
         if cond != None:
             self.trig_cond = cond
-            self.m2katrig.setAnalogCondition(0, cond)
-            self.m2katrig.setAnalogCondition(1, cond)
+            self.m2k.set_cond_trig(0, cond)
+            self.m2k.set_cond_trig(1, cond)
 
         if self.now_menu == self.MENU_TRIG:
             if self.trig_cond == 0:
@@ -353,7 +335,7 @@ class ScopeWidget():
         else:
             self.scopebar1_label_vdiv[ch].setStyleSheet('QLabel{ color: red; }')
 
-        self.m2kain.setRange(ch, self.input_range[ch])
+        self.m2k.set_range_in(ch, self.input_range[ch])
 
         if self.now_menu == self.MENU_CH1 or self.now_menu == self.MENU_CH2:
             dic = [self.langs['scope.plus_minus_25v'], self.langs['scope.plus_minus_2_5v']]
@@ -392,7 +374,7 @@ class ScopeWidget():
         self.offset[ch] = self.vdivs[self.vdiv_index[ch]] * 0.1 * self.offset_count[ch]
         self.scopebar1_label_offset[ch].setText(Utils.conv_num_str(self.offset[ch]) + 'V')
         self.update_vtick()
-        self.m2kain.setVerticalOffset(ch, self.offset[ch])
+        self.m2k.set_offset_in(ch, self.offset[ch])
 
     def step_hpos(self, incr=None):
         if incr != None:
@@ -418,8 +400,8 @@ class ScopeWidget():
         self.trig_level = self.vdivs[self.vdiv_index[self.trig_src]] * 0.1 * self.trig_level_count
         self.scopebar1_label_trig_level.setText(Utils.conv_num_str(self.trig_level) + 'V')
         self.update_vtick()
-        self.m2katrig.setAnalogLevel(0, self.trig_level)
-        self.m2katrig.setAnalogLevel(1, self.trig_level)
+        self.m2k.set_level_trig(0, self.trig_level)
+        self.m2k.set_level_trig(1, self.trig_level)
 
     def step_holdoff(self, incr=None):
         if incr != None:
@@ -430,8 +412,7 @@ class ScopeWidget():
 
         self.holdoff = self.tdivs[self.tdiv_index] / 2 * self.holdoff_count
         self.scopebar1_label_holdoff.setText(Utils.conv_num_str(self.holdoff) + 's')
-        if self.worker != None:
-            self.worker.set_interval(int(self.timer_interval_ms + self.holdoff * 1000))
+        self.m2k.set_holdoff_trig(int(self.timer_interval_ms + self.holdoff * 1000))
 
     def step_trig_hyst(self, incr=None):
         if incr != None:
@@ -442,8 +423,8 @@ class ScopeWidget():
 
         self.trig_hyst = 0.1 * self.trig_hyst_count
         self.scopebar1_label_trig_hyst.setText(Utils.conv_num_str(self.trig_hyst) + 'V')
-        self.m2katrig.setAnalogHysteresis(0, self.trig_hyst)
-        self.m2katrig.setAnalogHysteresis(1, self.trig_hyst)
+        self.m2k.set_hyst_trig(0, self.trig_hyst)
+        self.m2k.set_hyst_trig(1, self.trig_hyst)
 
     def toggle_trig_src(self):
         self.set_trig_src(not self.trig_src)
