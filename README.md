@@ -6,7 +6,7 @@
 
 ## English
 MultiView is GUI software for ADALM2000.
-** Due to performance issues, the sampling rate is limited to 100kSa/s. **
+**Due to performance issues, the sampling rate is limited to 100kSa/s.**
 
 ### Features
 - Interface closer to an actual oscilloscope than Scopy.
@@ -77,7 +77,7 @@ Running start.bat will start the program.
 
 ## 日本語
 MultiViewはADALM2000用のGUIソフトウェアです。
-** パフォーマンスの問題により、現在ではサンプリングレートは100kSa/sに制限されています。 **
+**パフォーマンスの問題により、現在ではサンプリングレートは100kSa/sに制限されています。**
 
 ### 特徴
 - Scopyより実際のオシロスコープに近いインタフェース
