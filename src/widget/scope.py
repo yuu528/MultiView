@@ -186,12 +186,6 @@ class ScopeWidget():
             x = np.linspace(self.xrange[0], self.xrange[1], num=len(data[0]))
             ch1_array = np.array(data[0]) + self.offset[0]
             ch2_array = np.array(data[1]) + self.offset[1]
-            if len(x) > len(ch1_array):
-                ch1_array = np.append(ch1_array, np.full(len(x) - len(ch1_array), self.offset[0]))
-                ch2_array = np.append(ch2_array, np.full(len(x) - len(ch2_array), self.offset[1]))
-            elif len(x) < len(ch1_array):
-                ch1_array = np.delete(ch1_array, slice(len(x) - 1, len(ch1_array) - 1))
-                ch2_array = np.delete(ch2_array, slice(len(x) - 1, len(ch2_array) - 1))
 
             if self.enable_ch[0]:
                 self.p1.plot(x=x, y=ch1_array, pen=self.colors[0], clear=True)
