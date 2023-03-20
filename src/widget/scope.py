@@ -184,8 +184,8 @@ class ScopeWidget():
     def plot(self, data, triggered):
         if (not self.single_waiting) or (self.single_waiting and triggered):
             x = np.linspace(self.xrange[0], self.xrange[1], num=len(data[0]))
-            ch1_array = np.array(data[0]) + self.offset[0]
-            ch2_array = np.array(data[1]) + self.offset[1]
+            ch1_array = np.array(data[0])
+            ch2_array = np.array(data[1])
 
             if self.enable_ch[0]:
                 self.p1.plot(x=x, y=ch1_array, pen=self.colors[0], clear=True)
@@ -230,9 +230,9 @@ class ScopeWidget():
     def update_vdiv(self, ch):
         self.calc_numbers()
         self.scopebar1_label_vdiv[ch].setText(Utils.conv_num_str(self.vdivs[self.vdiv_index[ch]]) + 'V/div')
-        self.p1.setYRange(self.yrange[0][0], self.yrange[0][1], padding=0)
-        self.p2.setYRange(self.yrange[1][0], self.yrange[1][1], padding=0)
-        self.p1axl.setTickSpacing(self.vdivs[self.vdiv_index[0]] * self.ydiv / 2, self.vdivs[self.vdiv_index[0]])
+        self.p1.setYRange(self.yrange[0][0] - self.offset[0], self.yrange[0][1] - self.offset[0], padding=0)
+        self.p2.setYRange(self.yrange[1][0] - self.offset[1], self.yrange[1][1] - self.offset[1], padding=0)
+        self.p1axl.setTickSpacing(levels=[(self.vdivs[self.vdiv_index[0]] * self.ydiv / 2, -self.offset[0]), (self.vdivs[self.vdiv_index[0]], -self.offset[0])])
         self.p2.setGeometry(self.p1.vb.sceneBoundingRect())
 
     def update_tdiv(self):
@@ -367,6 +367,7 @@ class ScopeWidget():
 
         self.offset[ch] = self.vdivs[self.vdiv_index[ch]] * 0.1 * self.offset_count[ch]
         self.scopebar1_label_offset[ch].setText(Utils.conv_num_str(self.offset[ch]) + 'V')
+        self.update_vdiv(ch)
         self.update_vtick()
         self.m2k.set_offset_in(ch, self.offset[ch])
 
