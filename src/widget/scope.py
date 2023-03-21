@@ -610,6 +610,7 @@ class ScopeWidget():
             self.single_waiting = True
             self.p1.clear()
             self.p2c.clear()
+            self.scopebar1_label_trig_status.setStyleSheet('')
             self.run_acquisition()
         elif name == 'panel5_dial1':
             self.step_trig_level(value)
