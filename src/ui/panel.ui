@@ -27,6 +27,7 @@
 	font-family: メイリオ, Meiryo;
 }
 
+
 QPushButton {
 	background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #606060, stop:1 #303030);
 	border: 2px ridge gray;
@@ -44,25 +45,6 @@ QPushButton:checked {
 }
 
 QPushButton:checked:pressed {
-	background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #016700, stop:1 #01a000);
-	border: 2px groove gray;
-}
-
-QPushButton#panel4_button1 {
-	background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ff6a00, stop:1 #ff0000);
-}
-
-QPushButton#panel4_button1:pressed {
-	background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ff0000, stop:1 #ff6a00);
-	border: 2px groove gray;
-}
-
-QPushButton#panel4_button1:checked {
-	background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #01a000, stop:1 #016700);
-	border: 2px groove gray;
-}
-
-QPushButton#panel4_button1:checked:pressed {
 	background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #016700, stop:1 #01a000);
 	border: 2px groove gray;
 }</string>
@@ -125,9 +107,6 @@ QPushButton#panel4_button1:checked:pressed {
             </property>
             <property name="pageStep">
              <number>1</number>
-            </property>
-            <property name="sliderPosition">
-             <number>0</number>
             </property>
             <property name="wrapping">
              <bool>true</bool>
@@ -316,9 +295,6 @@ QPushButton#panel4_button1:checked:pressed {
             <property name="text">
              <string>CH1</string>
             </property>
-            <property name="checkable">
-             <bool>false</bool>
-            </property>
             <property name="checked">
              <bool>false</bool>
             </property>
@@ -330,9 +306,6 @@ QPushButton#panel4_button1:checked:pressed {
          <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
            <widget class="QLabel" name="panel3_2_label1">
-            <property name="frameShape">
-             <enum>QFrame::NoFrame</enum>
-            </property>
             <property name="text">
              <string>Volts/div</string>
             </property>
@@ -387,9 +360,6 @@ QPushButton#panel4_button1:checked:pressed {
             </property>
             <property name="text">
              <string>CH2</string>
-            </property>
-            <property name="checkable">
-             <bool>false</bool>
             </property>
             <property name="checked">
              <bool>false</bool>
@@ -446,9 +416,6 @@ QPushButton#panel4_button1:checked:pressed {
          <widget class="QPushButton" name="panel4_button">
           <property name="text">
            <string>Single</string>
-          </property>
-          <property name="checkable">
-           <bool>false</bool>
           </property>
          </widget>
         </item>
