@@ -105,6 +105,8 @@ class ScopeWidget():
         self.p1axb = pg.AxisItem(orientation='bottom', showValues=False)
         self.p1 = self.scope_graph.addPlot(row=2, col=1, axisItems={'left': self.p1axl, 'bottom': self.p1axb})
         self.p2 = pg.ViewBox()
+        self.p2c = pg.PlotCurveItem()
+        self.p2.addItem(self.p2c)
         self.p1.scene().addItem(self.p2)
         self.p2.setXLink(self.p1)
 
@@ -191,8 +193,7 @@ class ScopeWidget():
                 self.p1.plot(x=x, y=ch1_array, pen=self.colors[0], clear=True)
 
             if self.enable_ch[1]:
-                self.p2.clear()
-                self.p2.addItem(pg.PlotCurveItem(x=x, y=ch2_array, pen=self.colors[1]))
+                self.p2c.setData(x=x, y=ch2_array, pen=self.colors[1])
 
         # to avoid chattering
         if self.trig_mode:
