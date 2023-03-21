@@ -208,7 +208,7 @@ class ScopeWidget():
         self.m2k.set_loop(False)
 
     def plot(self, data, triggered):
-        if (not self.single_waiting) or (self.single_waiting and triggered):
+        if (not self.single_waiting) or (self.single_waiting and triggered) or (self.single_waiting and not self.trig_mode):
             x = np.linspace(self.xrange[0], self.xrange[1], num=len(data[0]))
             array = [np.array(data[0]), np.array(data[1])]
 
@@ -229,10 +229,15 @@ class ScopeWidget():
 
         self.update_meas()
 
-        # to avoid chattering
-        if self.trig_mode:
+        if self.trig_mode: # normal
             self.on_triggered(triggered)
-        else:
+        else: # auto
+            if self.single_waiting:
+                self.single_waiting = False
+                self.panel.get_widget('panel4_toggle_button').setChecked(False)
+                self.stop_acquisition()
+
+            # to avoid chattering
             if not triggered:
                 self.triggered_count = 0
                 self.on_triggered(False)
