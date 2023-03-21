@@ -48,21 +48,21 @@ QPushButton:checked:pressed {
 	border: 2px groove gray;
 }
 
-QPushButton#panel3_button1 {
+QPushButton#panel4_button1 {
 	background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ff6a00, stop:1 #ff0000);
 }
 
-QPushButton#panel3_button1:pressed {
+QPushButton#panel4_button1:pressed {
 	background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ff0000, stop:1 #ff6a00);
 	border: 2px groove gray;
 }
 
-QPushButton#panel3_button1:checked {
+QPushButton#panel4_button1:checked {
 	background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #01a000, stop:1 #016700);
 	border: 2px groove gray;
 }
 
-QPushButton#panel3_button1:checked:pressed {
+QPushButton#panel4_button1:checked:pressed {
 	background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #016700, stop:1 #01a000);
 	border: 2px groove gray;
 }</string>
@@ -168,6 +168,61 @@ QPushButton#panel3_button1:checked:pressed {
      </item>
      <item>
       <widget class="QGroupBox" name="panel2_group">
+       <property name="title">
+        <string>Control</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <property name="leftMargin">
+         <number>5</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>5</number>
+        </property>
+        <property name="bottomMargin">
+         <number>5</number>
+        </property>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <widget class="QLabel" name="panel2_label1">
+            <property name="text">
+             <string>↺</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDial" name="panel2_dial1">
+            <property name="maximum">
+             <number>11</number>
+            </property>
+            <property name="pageStep">
+             <number>1</number>
+            </property>
+            <property name="wrapping">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="panel2_button1">
+          <property name="text">
+           <string>Auto Measure</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="panel3_group">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -193,7 +248,7 @@ QPushButton#panel3_button1:checked:pressed {
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
-           <widget class="QLabel" name="panel2_1_label1">
+           <widget class="QLabel" name="panel3_1_label1">
             <property name="text">
              <string>Volts/div</string>
             </property>
@@ -203,7 +258,7 @@ QPushButton#panel3_button1:checked:pressed {
            </widget>
           </item>
           <item>
-           <widget class="QDial" name="panel2_1_dial1">
+           <widget class="QDial" name="panel3_1_dial1">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -222,7 +277,7 @@ QPushButton#panel3_button1:checked:pressed {
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="panel2_1_label2">
+           <widget class="QLabel" name="panel3_1_label2">
             <property name="text">
              <string>Position</string>
             </property>
@@ -232,7 +287,7 @@ QPushButton#panel3_button1:checked:pressed {
            </widget>
           </item>
           <item>
-           <widget class="QDial" name="panel2_1_dial2">
+           <widget class="QDial" name="panel3_1_dial2">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -251,7 +306,7 @@ QPushButton#panel3_button1:checked:pressed {
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="panel2_1_button">
+           <widget class="QPushButton" name="panel3_1_button">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -274,7 +329,7 @@ QPushButton#panel3_button1:checked:pressed {
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_5">
           <item>
-           <widget class="QLabel" name="panel2_2_label1">
+           <widget class="QLabel" name="panel3_2_label1">
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
             </property>
@@ -287,7 +342,7 @@ QPushButton#panel3_button1:checked:pressed {
            </widget>
           </item>
           <item>
-           <widget class="QDial" name="panel2_2_dial1">
+           <widget class="QDial" name="panel3_2_dial1">
             <property name="maximum">
              <number>11</number>
             </property>
@@ -300,7 +355,7 @@ QPushButton#panel3_button1:checked:pressed {
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="panel2_2_label2">
+           <widget class="QLabel" name="panel3_2_label2">
             <property name="text">
              <string>Position</string>
             </property>
@@ -310,7 +365,7 @@ QPushButton#panel3_button1:checked:pressed {
            </widget>
           </item>
           <item>
-           <widget class="QDial" name="panel2_2_dial2">
+           <widget class="QDial" name="panel3_2_dial2">
             <property name="maximum">
              <number>11</number>
             </property>
@@ -323,7 +378,7 @@ QPushButton#panel3_button1:checked:pressed {
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="panel2_2_button">
+           <widget class="QPushButton" name="panel3_2_button">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -351,7 +406,7 @@ QPushButton#panel3_button1:checked:pressed {
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_8">
      <item>
-      <widget class="QGroupBox" name="panel3_group">
+      <widget class="QGroupBox" name="panel4_group">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
          <horstretch>0</horstretch>
@@ -375,7 +430,7 @@ QPushButton#panel3_button1:checked:pressed {
          <number>5</number>
         </property>
         <item>
-         <widget class="QPushButton" name="panel3_toggle_button">
+         <widget class="QPushButton" name="panel4_toggle_button">
           <property name="text">
            <string>Run/Stop</string>
           </property>
@@ -388,7 +443,7 @@ QPushButton#panel3_button1:checked:pressed {
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="panel3_button">
+         <widget class="QPushButton" name="panel4_button">
           <property name="text">
            <string>Single</string>
           </property>
@@ -401,7 +456,7 @@ QPushButton#panel3_button1:checked:pressed {
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="panel4_group">
+      <widget class="QGroupBox" name="panel5_group">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -427,7 +482,7 @@ QPushButton#panel3_button1:checked:pressed {
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_11">
           <item>
-           <widget class="QLabel" name="panel4_label1">
+           <widget class="QLabel" name="panel5_label1">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -443,7 +498,7 @@ QPushButton#panel3_button1:checked:pressed {
            </widget>
           </item>
           <item>
-           <widget class="QDial" name="panel4_dial1">
+           <widget class="QDial" name="panel5_dial1">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -468,7 +523,7 @@ QPushButton#panel3_button1:checked:pressed {
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
-             <widget class="QLabel" name="panel4_label2">
+             <widget class="QLabel" name="panel5_label2">
               <property name="text">
                <string>Holdoff</string>
               </property>
@@ -478,7 +533,7 @@ QPushButton#panel3_button1:checked:pressed {
              </widget>
             </item>
             <item>
-             <widget class="QDial" name="panel4_dial2">
+             <widget class="QDial" name="panel5_dial2">
               <property name="maximum">
                <number>11</number>
               </property>
@@ -495,7 +550,7 @@ QPushButton#panel3_button1:checked:pressed {
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_12">
             <item>
-             <widget class="QLabel" name="panel4_label3">
+             <widget class="QLabel" name="panel5_label3">
               <property name="text">
                <string>Hysteresis</string>
               </property>
@@ -505,7 +560,7 @@ QPushButton#panel3_button1:checked:pressed {
              </widget>
             </item>
             <item>
-             <widget class="QDial" name="panel4_dial3">
+             <widget class="QDial" name="panel5_dial3">
               <property name="maximum">
                <number>11</number>
               </property>
@@ -522,7 +577,7 @@ QPushButton#panel3_button1:checked:pressed {
          </layout>
         </item>
         <item>
-         <widget class="QPushButton" name="panel4_button1">
+         <widget class="QPushButton" name="panel5_button1">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
             <horstretch>0</horstretch>

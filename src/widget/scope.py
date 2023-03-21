@@ -18,10 +18,25 @@ class ScopeWidget():
         self.ydiv = 8
         self.samplerate = self.m2k.rate_in
         self.langs = Langs(lang).get_all()
+        self.ENCODER_NONE = 0
+        self.ENCODER_MEAS1 = 1
+        self.ENCODER_MEAS2 = 2
         self.MENU_NONE = 0
         self.MENU_CH1 = 1
         self.MENU_CH2 = 2
         self.MENU_TRIG = 3
+        self.MENU_AUTO_MEAS = 4
+        self.MEAS_NONE = 0
+        self.MEAS_MAX = 1
+        self.MEAS_MIN = 2
+        self.MEAS_VPP = 3
+        self.MEAS_INDEX_MAX = 3
+        self.MEAS_NAMES = [
+            self.langs['scope.none'], self.langs['scope.min'], self.langs['scope.max'], self.langs['scope.vpp']
+        ]
+        self.MEAS_UNITS = [
+            '', 'V', 'V', 'V'
+        ]
         self.FINDER_PLOT_COLOR = 'yellow'
         self.TRIG_TICK_COLOR = '#01a000'
         self.HPOS_TICK_COLOR = 'red'
@@ -50,6 +65,11 @@ class ScopeWidget():
         self.running = False
         self.colors = ['orange', 'blue']
         self.now_menu = self.MENU_NONE
+        self.now_encoder = self.ENCODER_NONE
+        self.now_meas = [self.MEAS_NONE, self.MEAS_NONE]
+        self.meas_src = 0
+        self.meas_val = [0, 0]
+        self.before_encoder_button = 0
 
         self.stopped_hpos = 0
         self.triggered_count = 0
@@ -74,6 +94,10 @@ class ScopeWidget():
         self.scopebar1_label_offset = []
         for i in range(1, 3):
             self.scopebar1_label_offset.append(this.findChild(QtWidgets.QLabel, 'scopebar1_label_offset' + str(i)))
+
+        self.scopebar2_label = []
+        for i in range(1, 3):
+            self.scopebar2_label.append(this.findChild(QtWidgets.QLabel, 'scopebar2_label' + str(i)))
 
         self.scope_button = []
         for i in range(1, 7):
@@ -186,14 +210,24 @@ class ScopeWidget():
     def plot(self, data, triggered):
         if (not self.single_waiting) or (self.single_waiting and triggered):
             x = np.linspace(self.xrange[0], self.xrange[1], num=len(data[0]))
-            ch1_array = np.array(data[0])
-            ch2_array = np.array(data[1])
+            array = [np.array(data[0]), np.array(data[1])]
 
             if self.enable_ch[0]:
-                self.p1.plot(x=x, y=ch1_array, pen=self.colors[0], clear=True)
+                self.p1.plot(x=x, y=array[0], pen=self.colors[0], clear=True)
 
             if self.enable_ch[1]:
-                self.p2c.setData(x=x, y=ch2_array, pen=self.colors[1])
+                self.p2c.setData(x=x, y=array[1], pen=self.colors[1])
+
+        # calc meas
+        for i, now_meas in enumerate(self.now_meas):
+            if now_meas == self.MEAS_MIN:
+                self.meas_val[i] = np.min(array[self.meas_src])
+            elif now_meas == self.MEAS_MAX:
+                self.meas_val[i] = np.max(array[self.meas_src])
+            elif now_meas == self.MEAS_VPP:
+                self.meas_val[i] = np.max(array[self.meas_src]) - np.min(array[self.meas_src])
+
+        self.update_meas()
 
         # to avoid chattering
         if self.trig_mode:
@@ -250,12 +284,17 @@ class ScopeWidget():
         self.m2k.set_delay_trig(int(-(self.tdivs[self.tdiv_index] * self.xdiv / 2 + self.hpos) * self.samplerate))
         self.m2k.set_count_in(self.samplecount)
 
+    def update_meas(self):
+        for i, meas in enumerate(self.meas_val):
+            if self.now_meas[i] != self.MEAS_NONE:
+                self.scopebar2_label[i].setText(self.MEAS_NAMES[self.now_meas[i]] + '(' + str(self.meas_src + 1) + '): ' + Utils.conv_num_str(round(self.meas_val[i], 4)) + self.MEAS_UNITS[self.now_meas[i]])
+
     def on_triggered(self, triggered):
         if triggered:
             self.scopebar1_label_trig_status.setStyleSheet('QLabel { background-color: #01a000; border-color: #016700; }')
             if self.single_waiting:
                 self.single_waiting = False
-                self.panel.get_widget('panel3_toggle_button').setChecked(False)
+                self.panel.get_widget('panel4_toggle_button').setChecked(False)
                 self.update_tdiv()
                 self.stop_acquisition()
         else:
@@ -335,6 +374,13 @@ class ScopeWidget():
         if self.now_menu == self.MENU_CH1 or self.now_menu == self.MENU_CH2:
             dic = [self.langs['scope.plus_minus_25v'], self.langs['scope.plus_minus_2_5v']]
             self.scope_button[1].setText(self.langs['scope.range'] + '\n' + dic[self.input_range[ch]])
+
+    def set_meas_src(self, ch=None):
+        if ch != None:
+            self.meas_src = ch
+
+        if self.now_menu == self.MENU_AUTO_MEAS:
+            self.scope_button[2].setText(self.langs['scope.source'] + '\n' + self.langs['scope.ch'] + str(self.meas_src + 1))
 
     def step_vdiv(self, ch, incr): # bool incr: increase or decrease
         if incr:
@@ -437,6 +483,44 @@ class ScopeWidget():
     def toggle_input_range(self, ch):
         self.set_input_range(ch, not self.input_range[ch])
 
+    def toggle_meas_src(self):
+        self.set_meas_src(not self.meas_src)
+
+    def step_meas(self, index, up=None):
+        symbol = ''
+        if up != None:
+            symbol = self.langs['scope.encoder']
+            if up:
+                if self.now_meas[index] < self.MEAS_INDEX_MAX:
+                    self.now_meas[index] += 1
+                else:
+                    self.now_meas[index] = 0
+            else:
+                if self.now_meas[index] > 0:
+                    self.now_meas[index] -= 1
+                else:
+                    self.now_meas[index] = self.MEAS_INDEX_MAX
+
+        if self.now_meas[index] == self.MEAS_NONE:
+            self.scopebar2_label[index].setText('')
+
+        if self.now_menu == self.MENU_AUTO_MEAS:
+            self.scope_button[index].setText(symbol + self.langs['scope.measure'] + str(index + 1) + '\n' + self.MEAS_NAMES[self.now_meas[index]])
+
+        self.update_meas()
+
+    def set_encoder(self, index, id_):
+        if id_ != self.now_encoder:
+            self.now_encoder = id_
+            before_text = self.scope_button[self.before_encoder_button].text()
+            if before_text[0] == self.langs['scope.encoder']:
+                self.scope_button[self.before_encoder_button].setText(before_text[1:])
+
+            self.scope_button[index].setText(self.langs['scope.encoder'] + self.scope_button[index].text())
+            self.now_encoder = id_
+
+            self.before_encoder_button = index
+
     def show_buttons(self, count):
         for i in range(count):
             try:
@@ -451,6 +535,7 @@ class ScopeWidget():
 
     def change_menu(self, index):
         if index != self.now_menu:
+            self.now_encoder = self.ENCODER_NONE
             self.now_menu = index
             if index == self.MENU_CH1:
                 self.set_enable_ch(0)
@@ -459,7 +544,7 @@ class ScopeWidget():
                 self.show_buttons(2)
                 self.scope_button[0].pressed.connect(lambda: self.toggle_enable_ch(0))
                 self.scope_button[1].pressed.connect(lambda: self.toggle_input_range(0))
-            if index == self.MENU_CH2:
+            elif index == self.MENU_CH2:
                 self.set_enable_ch(1)
                 self.set_input_range(1)
 
@@ -475,43 +560,59 @@ class ScopeWidget():
                 self.scope_button[0].pressed.connect(self.toggle_trig_src)
                 self.scope_button[1].pressed.connect(self.toggle_trig_mode)
                 self.scope_button[2].pressed.connect(self.toggle_trig_cond)
+            elif index == self.MENU_AUTO_MEAS:
+                self.step_meas(0)
+                self.step_meas(1)
+                self.set_meas_src()
+                self.set_encoder(0, self.ENCODER_MEAS1)
+                self.show_buttons(3)
+                self.scope_button[0].pressed.connect(lambda id_=self.ENCODER_MEAS1: self.set_encoder(0, id_))
+                self.scope_button[1].pressed.connect(lambda id_=self.ENCODER_MEAS2: self.set_encoder(1, id_))
+                self.scope_button[2].pressed.connect(self.toggle_meas_src)
 
     def control(self, name, value):
         if name == 'panel1_dial1':
             self.step_tdiv(not value)
         elif name == 'panel1_dial2':
             self.step_hpos(value)
-        elif name == 'panel2_1_dial1':
+        elif name == 'panel2_dial1':
+            if self.now_encoder == self.ENCODER_MEAS1:
+                self.step_meas(0, value)
+            elif self.now_encoder == self.ENCODER_MEAS2:
+                self.step_meas(1, value)
+        elif name == 'panel2_button1':
+            self.change_menu(self.MENU_AUTO_MEAS)
+        elif name == 'panel3_1_dial1':
             self.step_vdiv(0, not value)
-        elif name == 'panel2_2_dial1':
+        elif name == 'panel3_2_dial1':
             self.step_vdiv(1, not value)
-        elif name == 'panel2_1_dial2':
+        elif name == 'panel3_1_dial2':
             self.step_offset(0, value)
-        elif name == 'panel2_2_dial2':
+        elif name == 'panel3_2_dial2':
             self.step_offset(1, value)
-        elif name == 'panel2_1_button':
+        elif name == 'panel3_1_button':
             self.change_menu(self.MENU_CH1)
-        elif name == 'panel2_2_button':
+        elif name == 'panel3_2_button':
             self.change_menu(self.MENU_CH2)
-        elif name == 'panel3_toggle_button':
+        elif name == 'panel4_toggle_button':
             if value:
                 self.single_waiting = False
                 self.run_acquisition()
             else:
                 self.stopped_hpos = self.hpos
                 self.stop_acquisition()
-        elif name == 'panel3_button':
+        elif name == 'panel4_button':
             self.single_waiting = True
             self.p1.clear()
             self.p2c.clear()
             self.run_acquisition()
-        elif name == 'panel4_dial1':
+        elif name == 'panel5_dial1':
             self.step_trig_level(value)
-        elif name == 'panel4_dial2':
+        elif name == 'panel5_dial2':
             self.step_holdoff(value)
-        elif name == 'panel4_dial3':
+        elif name == 'panel5_dial3':
             self.step_trig_hyst(value)
-        elif name == 'panel4_button1':
+        elif name == 'panel5_button1':
             self.change_menu(self.MENU_TRIG)
         elif name == 'show':
             self.update_tdiv()

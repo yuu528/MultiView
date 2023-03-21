@@ -13,15 +13,16 @@ class Panel(QtWidgets.QWidget):
 
         # get widgets
         self.toggle_button_names = [
-            'panel3_toggle_button'
+            'panel4_toggle_button'
         ]
         self.toggle_buttons = []
         for name in self.toggle_button_names:
             self.toggle_buttons.append(self.findChild(QtWidgets.QPushButton, name))
 
         self.button_names = [
-            'panel2_1_button', 'panel2_2_button',
-            'panel3_button', 'panel4_button1'
+            'panel2_button1',
+            'panel3_1_button', 'panel3_2_button',
+            'panel4_button', 'panel5_button1'
         ]
         self.buttons = []
         for name in self.button_names:
@@ -29,9 +30,10 @@ class Panel(QtWidgets.QWidget):
 
         self.dial_names = [
             'panel1_dial1', 'panel1_dial2',
-            'panel2_1_dial1', 'panel2_1_dial2',
-            'panel2_2_dial1', 'panel2_2_dial2',
-            'panel4_dial1', 'panel4_dial2', 'panel4_dial3'
+            'panel2_dial1',
+            'panel3_1_dial1', 'panel3_1_dial2',
+            'panel3_2_dial1', 'panel3_2_dial2',
+            'panel5_dial1', 'panel5_dial2', 'panel5_dial3'
         ]
         self.dials = []
         for name in self.dial_names:
