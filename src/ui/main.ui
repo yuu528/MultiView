@@ -487,6 +487,20 @@ QLabel#scopebar1_label_trig_status {
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QLabel" name="scopebar2_label3">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="scopebar2_label4">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
       </layout>

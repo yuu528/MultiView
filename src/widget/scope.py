@@ -21,6 +21,8 @@ class ScopeWidget():
         self.ENCODER_NONE = 0
         self.ENCODER_MEAS1 = 1
         self.ENCODER_MEAS2 = 2
+        self.ENCODER_MEAS3 = 3
+        self.ENCODER_MEAS4 = 4
         self.MENU_NONE = 0
         self.MENU_CH1 = 1
         self.MENU_CH2 = 2
@@ -66,9 +68,9 @@ class ScopeWidget():
         self.colors = ['orange', 'blue']
         self.now_menu = self.MENU_NONE
         self.now_encoder = self.ENCODER_NONE
-        self.now_meas = [self.MEAS_NONE, self.MEAS_NONE]
+        self.now_meas = [self.MEAS_NONE, self.MEAS_NONE, self.MEAS_NONE, self.MEAS_NONE]
         self.meas_src = 0
-        self.meas_val = [0, 0]
+        self.meas_val = [0, 0, 0, 0]
         self.before_encoder_button = 0
 
         self.stopped_hpos = 0
@@ -96,7 +98,7 @@ class ScopeWidget():
             self.scopebar1_label_offset.append(this.findChild(QtWidgets.QLabel, 'scopebar1_label_offset' + str(i)))
 
         self.scopebar2_label = []
-        for i in range(1, 3):
+        for i in range(1, 5):
             self.scopebar2_label.append(this.findChild(QtWidgets.QLabel, 'scopebar2_label' + str(i)))
 
         self.scope_button = []
@@ -385,7 +387,7 @@ class ScopeWidget():
             self.meas_src = ch
 
         if self.now_menu == self.MENU_AUTO_MEAS:
-            self.scope_button[2].setText(self.langs['scope.source'] + '\n' + self.langs['scope.ch'] + str(self.meas_src + 1))
+            self.scope_button[4].setText(self.langs['scope.source'] + '\n' + self.langs['scope.ch'] + str(self.meas_src + 1))
 
     def step_vdiv(self, ch, incr): # bool incr: increase or decrease
         if incr:
@@ -568,12 +570,16 @@ class ScopeWidget():
             elif index == self.MENU_AUTO_MEAS:
                 self.step_meas(0)
                 self.step_meas(1)
+                self.step_meas(2)
+                self.step_meas(3)
                 self.set_meas_src()
                 self.set_encoder(0, self.ENCODER_MEAS1)
-                self.show_buttons(3)
+                self.show_buttons(5)
                 self.scope_button[0].pressed.connect(lambda id_=self.ENCODER_MEAS1: self.set_encoder(0, id_))
                 self.scope_button[1].pressed.connect(lambda id_=self.ENCODER_MEAS2: self.set_encoder(1, id_))
-                self.scope_button[2].pressed.connect(self.toggle_meas_src)
+                self.scope_button[2].pressed.connect(lambda id_=self.ENCODER_MEAS3: self.set_encoder(2, id_))
+                self.scope_button[3].pressed.connect(lambda id_=self.ENCODER_MEAS4: self.set_encoder(3, id_))
+                self.scope_button[4].pressed.connect(self.toggle_meas_src)
 
     def control(self, name, value):
         if name == 'panel1_dial1':
@@ -585,6 +591,10 @@ class ScopeWidget():
                 self.step_meas(0, value)
             elif self.now_encoder == self.ENCODER_MEAS2:
                 self.step_meas(1, value)
+            elif self.now_encoder == self.ENCODER_MEAS3:
+                self.step_meas(2, value)
+            elif self.now_encoder == self.ENCODER_MEAS4:
+                self.step_meas(3, value)
         elif name == 'panel2_button1':
             self.change_menu(self.MENU_AUTO_MEAS)
         elif name == 'panel3_1_dial1':
