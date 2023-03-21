@@ -303,7 +303,7 @@ class ScopeWidget():
     def set_trig_src(self, src=None):
         if src != None:
             self.trig_src = src
-            self.m2k.src_trig(src)
+            self.m2k.set_src_trig(src)
 
         if self.now_menu == self.MENU_TRIG:
             self.scope_button[0].setText(self.langs['scope.source'] + '\n' + self.langs['scope.ch'] + str(self.trig_src + 1))
