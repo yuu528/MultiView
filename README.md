@@ -5,7 +5,7 @@
 ![MultiView preview 1](image/1.png)
 
 ## English
-MultiView is GUI software for ADALM2000.
+MultiView is GUI software for ADALM2000.  
 **Due to performance issues, the sampling rate is limited to 100kSa/s.**
 
 ### Features
@@ -33,22 +33,29 @@ Running start.bat will start the program.
 		- Waveforms are displayed.
 		- The triggering position is displayed above waveforms.
 		- Trigger level and 0V level of each channel are displayed in the left part of the waveform.
+	- Measurement bar
+		- Displays measured values.
 	- Menu
 		- The menu corresponding to the button pressed on the operation panel is displayed.
 - Operation Panel Window
-	- Horizontal Controls
+	- Horizontal Controls (Horizontal)
 		- Time/div: Sets the time per division.
 		- Position: Sets the horizontal position.
-	- Vertical Controls
+	- Vertical Controls (Vertical)
 		- Volts/div: Sets the voltage per division.
 		- Position: Sets the vertical position.
 		- CH1/CH2: Displays the menu for each channel.
 			- CH1/CH2: Turns off the channel display.
 			- Range: Changes the input range of the ADALM2000. **Never input signals exceeding the input range.**
-	- Sweep Control
+	- Function Controls (Control)
+		- ↺: Sets values in the menu which indicated by the "↺" symbol.
+		- Auto Measure: Displays the menu for setting auto measure functions.
+			- Meas1-4: Change the function of the ↺ dial to set each measurement.
+			- Source: Sets measurement source.
+	- Sweep Control (Run Control)
 		- Run/Stop: Start/Stop the sweep.
 		- Single: Sweep only once.
-	- Trigger Control
+	- Trigger Control (Trigger)
 		- Level: Sets the trigger level.
 		- Holdoff: Sets holdoff.
 		- Hysterisis: Sets the hysteresis.
@@ -62,7 +69,8 @@ Running start.bat will start the program.
 	- [ ] Saving settings
 	- [ ] Vernier control functions
 	- [ ] Math functions (including FFT)
-	- [ ] Measurement functions
+	- [x] Measurement functions
+	- [ ] Cursor measurement function
 	- [ ] Pattern trigger function
 	- [ ] Phosphor display
 - [ ] Network analyzer
@@ -76,7 +84,7 @@ Running start.bat will start the program.
 - [ ] Physical operation panel fabrication and connection capabilities
 
 ## 日本語
-MultiViewはADALM2000用のGUIソフトウェアです。
+MultiViewはADALM2000用のGUIソフトウェアです。  
 **パフォーマンスの問題により、現在ではサンプリングレートは100kSa/sに制限されています。**
 
 ### 特徴
@@ -104,6 +112,8 @@ start.batを実行することでプログラムが起動します。
 		- 波形が表示されます。
 		- 波形上部にトリガがかかった位置を表す印が表示されます。
 		- 波形左部にトリガレベルと各チャンネルの0Vレベルが表示されます。
+	- 計測バー
+		- 自動計測値が表示されます。
 	- メニュー
 		- 操作パネルで押されたボタンに対応したメニューが表示されます。
 - 操作パネルウィンドウ
@@ -116,6 +126,11 @@ start.batを実行することでプログラムが起動します。
 		- CH1/CH2: 各チャンネルのメニューを表示します。
 			- CH1/CH2: チャンネルの表示をオフにします。
 			- Range: ADALM2000の入力レンジを変更します。 **入力レンジを超えた信号は絶対に入力しないでください。**
+	- 機能操作部 (Control)
+		- ↺: メインウィンドウのメニューのうち、同じアイコンが表示されているメニューの値を変更します。
+		- Auto Measure: 自動計測機能の設定メニューを表示します。
+			- Meas 1～4: クリックすると「↺」ダイヤルで計測項目を設定できるようになります。
+			- Source: 自動計測を行うチャンネルを設定します。
 	- 掃引操作部 (Run Control)
 		- Run/Stop: 掃引開始・停止を行います。
 		- Single: 1度だけ掃引します。
@@ -133,7 +148,8 @@ start.batを実行することでプログラムが起動します。
 	- [ ] 設定値の保存機能
 	- [ ] Vernierコントロール機能
 	- [ ] Math機能 (FFT含む)
-	- [ ] 計測機能
+	- [x] 計測機能
+	- [ ] カーソルによる計測機能
 	- [ ] パターントリガ機能
 	- [ ] フォスファ表示
 - [ ] ネットワークアナライザ
