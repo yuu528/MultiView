@@ -81,7 +81,7 @@ class ScopeWidget():
             self.hide_widget(self.scope_button[i - 1])
 
         # graph settings
-        pg.setConfigOptions(antialias=True)
+        pg.setConfigOptions(useOpenGL=True, useNumba=True)
 
         # layout
         self.scope_graph.ci.layout.setSpacing(0)
