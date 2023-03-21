@@ -309,7 +309,7 @@ class ScopeWidget():
                 if ch == 0:
                     self.p1.clear()
                 else:
-                    self.p2.clear()
+                    self.p2c.clear()
                 self.vtick.removeTick(self.offset_tick[ch])
                 self.offset_tick[ch] = None
 
@@ -503,7 +503,7 @@ class ScopeWidget():
         elif name == 'panel3_button':
             self.single_waiting = True
             self.p1.clear()
-            self.p2.clear()
+            self.p2c.clear()
             self.run_acquisition()
         elif name == 'panel4_dial1':
             self.step_trig_level(value)
