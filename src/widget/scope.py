@@ -189,16 +189,10 @@ class ScopeWidget():
         self.scope_graph.ci.layout.itemAt(2, 1).setContentsMargins(self.TICK_SIZE / 2, self.TICK_SIZE / 2, self.TICK_SIZE / 2 + 1, self.TICK_SIZE / 2)
         self.p2.setGeometry(self.p1.vb.sceneBoundingRect())
 
-        # calculated values
-        self.calc_numbers()
-
         # label settings
-        self.update_vdiv(0)
-        self.update_vdiv(1)
         self.update_tdiv()
         self.step_offset(0)
         self.step_offset(1)
-        self.step_trig_level()
         self.step_holdoff()
         self.step_trig_hyst()
         self.set_trig_src()
@@ -367,7 +361,6 @@ class ScopeWidget():
             self.scope_button[0].setText(self.langs['scope.source'] + '\n' + self.langs['scope.ch'] + str(self.trig_src + 1))
 
         self.step_trig_level()
-        self.update_vtick()
 
     def set_trig_mode(self, mode=None):
         if mode != None:
@@ -450,7 +443,6 @@ class ScopeWidget():
 
         self.step_offset(ch)
         self.step_trig_level()
-        self.update_vdiv(ch)
 
     def step_tdiv(self, incr):
         if incr:
@@ -461,7 +453,6 @@ class ScopeWidget():
                 self.tdiv_index -= 1
 
         self.step_hpos()
-        self.update_tdiv()
 
     def step_offset(self, ch, incr=None):
         if incr != None:
@@ -473,7 +464,6 @@ class ScopeWidget():
         self.offset[ch] = self.vdivs[self.vdiv_index[ch]] * 0.1 * self.offset_count[ch]
         self.scopebar1_label_offset[ch].setText(Utils.conv_num_str(self.offset[ch]) + 'V')
         self.update_vdiv(ch)
-        self.update_vtick()
         self.m2k.set_offset_in(ch, self.offset[ch])
 
     def step_hpos(self, incr=None):
