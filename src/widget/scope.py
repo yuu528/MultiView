@@ -219,9 +219,9 @@ class ScopeWidget():
         self.config['SCOPE']['hpos_count'] = str(self.hpos_count)
         self.config['SCOPE']['trig_level_count'] = str(self.trig_level_count)
         self.config['SCOPE']['trig_hyst_count'] = str(self.trig_hyst_count)
-        self.config['SCOPE']['trig_mode'] = str(self.trig_mode)
-        self.config['SCOPE']['trig_cond'] = str(self.trig_cond)
-        self.config['SCOPE']['trig_src'] = str(self.trig_src)
+        self.config['SCOPE']['trig_mode'] = str(int(self.trig_mode))
+        self.config['SCOPE']['trig_cond'] = str(int(self.trig_cond))
+        self.config['SCOPE']['trig_src'] = str(int(self.trig_src))
         self.config['SCOPE']['holdoff_count'] = str(self.holdoff_count)
         self.config['SCOPE']['enable_ch0'] = str(self.enable_ch[0])
         self.config['SCOPE']['enable_ch1'] = str(self.enable_ch[1])
@@ -229,7 +229,7 @@ class ScopeWidget():
         self.config['SCOPE']['now_meas1'] = str(self.now_meas[1])
         self.config['SCOPE']['now_meas2'] = str(self.now_meas[2])
         self.config['SCOPE']['now_meas3'] = str(self.now_meas[3])
-        self.config['SCOPE']['meas_src'] = str(self.meas_src)
+        self.config['SCOPE']['meas_src'] = str(int(self.meas_src))
         with open('../config.ini', 'w') as configfile:
             self.config.write(configfile)
 
