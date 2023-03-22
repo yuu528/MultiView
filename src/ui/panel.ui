@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>480</width>
-    <height>480</height>
+    <height>483</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -24,7 +24,7 @@
 	background-color: black;
 	color: white;
 	font-size: 16px;
-	font-family: メイリオ, Meiryo;
+	font-family: Trebuchet MS, Helvetica, sans-serif;
 }
 
 

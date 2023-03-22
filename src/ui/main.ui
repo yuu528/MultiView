@@ -24,7 +24,7 @@
 	background-color: black;
 	color: white;
 	font-size: 16px;
-	font-family: メイリオ, Meiryo;
+	font-family: Trebuchet MS, Helvetica, sans-serif;
 }
 
 QComboBox {
