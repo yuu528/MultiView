@@ -1,3 +1,4 @@
+import configparser
 import numpy as np
 from PyQt5 import QtWidgets
 import pyqtgraph as pg
@@ -44,32 +45,59 @@ class ScopeWidget():
         self.HPOS_TICK_COLOR = 'red'
         self.TICK_SIZE = 10
 
+        # read config
+        self.config = configparser.ConfigParser()
+        # set default
+        self.config.read_dict({'SCOPE': {
+            'vdiv_index0': 0,
+            'vdiv_index1': 0,
+            'tdiv_index': 0,
+            'offset_count0': 0,
+            'offset_count1': 0,
+            'hpos_count': 0,
+            'trig_level_count': 0,
+            'trig_hyst_count': 6,
+            'trig_mode': 0,
+            'trig_cond': 0,
+            'trig_src': 0,
+            'holdoff_count': 0,
+            'enable_ch0': True,
+            'enable_ch1': True,
+            'now_meas0': 0,
+            'now_meas1': 0,
+            'now_meas2': 0,
+            'now_meas3': 0,
+            'meas_src': 0,
+        }})
+        self.config.read('../config.ini')
+        conf = self.config['SCOPE']
+
         # setting values
         self.vdivs = [0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
         self.tdivs = [0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1]
-        self.vdiv_index = [0, 0]
-        self.tdiv_index = 0
-        self.input_range = [0, 0]
+        self.vdiv_index = [int(conf['vdiv_index0']), int(conf['vdiv_index1'])]
+        self.tdiv_index = int(conf['tdiv_index'])
+        self.input_range = [0, 0] # set input range to 25V for default
         self.offset = [0, 0]
-        self.offset_count = [0, 0]
+        self.offset_count = [int(conf['offset_count0']), int(conf['offset_count1'])]
         self.hpos = 0
-        self.hpos_count = 0
+        self.hpos_count = int(conf['hpos_count'])
         self.trig_level = 0
-        self.trig_level_count = 0
+        self.trig_level_count = int(conf['trig_level_count'])
         self.trig_hyst = 0.6
-        self.trig_hyst_count = 6
-        self.trig_mode = 0
-        self.trig_cond = 0
-        self.trig_src = 0
+        self.trig_hyst_count = int(conf['trig_hyst_count'])
+        self.trig_mode = int(conf['trig_mode'])
+        self.trig_cond = int(conf['trig_cond'])
+        self.trig_src = int(conf['trig_src'])
         self.holdoff = 0
-        self.holdoff_count = 0
-        self.enable_ch = [True, True]
+        self.holdoff_count = int(conf['holdoff_count'])
+        self.enable_ch = [bool(conf['enable_ch0']), bool(conf['enable_ch1'])]
         self.running = False
         self.colors = ['orange', 'blue']
         self.now_menu = self.MENU_NONE
         self.now_encoder = self.ENCODER_NONE
-        self.now_meas = [self.MEAS_NONE, self.MEAS_NONE, self.MEAS_NONE, self.MEAS_NONE]
-        self.meas_src = 0
+        self.now_meas = [int(conf['now_meas0']), int(conf['now_meas1']), int(conf['now_meas2']), int(conf['now_meas3'])]
+        self.meas_src = int(conf['meas_src'])
         self.meas_val = [0, 0, 0, 0]
         self.before_encoder_button = 0
 
@@ -181,6 +209,29 @@ class ScopeWidget():
 
         # run
         self.m2k.acquired.connect(self.plot)
+
+    def save(self):
+        self.config['SCOPE']['vdiv_index0'] = str(self.vdiv_index[0])
+        self.config['SCOPE']['vdiv_index1'] = str(self.vdiv_index[1])
+        self.config['SCOPE']['tdiv_index'] = str(self.tdiv_index)
+        self.config['SCOPE']['offset_count0'] = str(self.offset_count[0])
+        self.config['SCOPE']['offset_count1'] = str(self.offset_count[1])
+        self.config['SCOPE']['hpos_count'] = str(self.hpos_count)
+        self.config['SCOPE']['trig_level_count'] = str(self.trig_level_count)
+        self.config['SCOPE']['trig_hyst_count'] = str(self.trig_hyst_count)
+        self.config['SCOPE']['trig_mode'] = str(self.trig_mode)
+        self.config['SCOPE']['trig_cond'] = str(self.trig_cond)
+        self.config['SCOPE']['trig_src'] = str(self.trig_src)
+        self.config['SCOPE']['holdoff_count'] = str(self.holdoff_count)
+        self.config['SCOPE']['enable_ch0'] = str(self.enable_ch[0])
+        self.config['SCOPE']['enable_ch1'] = str(self.enable_ch[1])
+        self.config['SCOPE']['now_meas0'] = str(self.now_meas[0])
+        self.config['SCOPE']['now_meas1'] = str(self.now_meas[1])
+        self.config['SCOPE']['now_meas2'] = str(self.now_meas[2])
+        self.config['SCOPE']['now_meas3'] = str(self.now_meas[3])
+        self.config['SCOPE']['meas_src'] = str(self.meas_src)
+        with open('../config.ini', 'w') as configfile:
+            self.config.write(configfile)
 
     def calc_numbers(self):
         self.xrange = [-self.tdivs[self.tdiv_index] * self.xdiv / 2, self.tdivs[self.tdiv_index] * self.xdiv / 2]

@@ -48,6 +48,7 @@ class Main(QtWidgets.QWidget):
 
     def closeEvent(self, event):
         self.panel.close()
+        self.main_widget_ins[0].save()
         del self.main_widget_ins[0]
         event.accept()
 
