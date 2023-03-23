@@ -433,6 +433,38 @@ class ScopeWidget():
         if self.now_menu == self.MENU_AUTO_MEAS:
             self.scope_button[4].setText(self.langs['scope.source'] + '\n' + self.langs['scope.ch'] + str(self.meas_src + 1))
 
+    def update_offset(self, ch):
+        self.offset[ch] = self.vdivs[self.vdiv_index[ch]] * 0.1 * self.offset_count[ch]
+        self.scopebar1_label_offset[ch].setText(Utils.conv_num_str(self.offset[ch]) + 'V')
+        self.update_vdiv(ch)
+        self.m2k.set_offset_in(ch, self.offset[ch])
+
+    def update_hpos(self):
+        self.hpos = self.tdivs[self.tdiv_index] / 5 * self.hpos_count
+        self.update_tdiv()
+        self.scopebar1_label_hpos.setText(Utils.conv_num_str(self.hpos) + 's')
+        if not self.running:
+            self.p1.setXRange(self.xrange[0] - self.hpos + self.stopped_hpos, self.xrange[1] - self.hpos + self.stopped_hpos, padding=0)
+            self.p1axb.setTickSpacing(levels=[(self.tdivs[self.tdiv_index] * self.xdiv / 2, -self.hpos + self.stopped_hpos), (self.tdivs[self.tdiv_index], -self.hpos + self.stopped_hpos)])
+
+    def update_trig_level(self):
+        self.trig_level = self.vdivs[self.vdiv_index[self.trig_src]] * 0.1 * self.trig_level_count
+        self.scopebar1_label_trig_level.setText(Utils.conv_num_str(self.trig_level) + 'V')
+        self.update_vtick()
+        self.m2k.set_level_trig(0, self.trig_level)
+        self.m2k.set_level_trig(1, self.trig_level)
+
+    def update_holdoff(self):
+        self.holdoff = self.tdivs[self.tdiv_index] / 2 * self.holdoff_count
+        self.scopebar1_label_holdoff.setText(Utils.conv_num_str(self.holdoff) + 's')
+        self.m2k.set_holdoff_trig(int(self.timer_interval_ms + self.holdoff * 1000))
+
+    def update_trig_hyst(self):
+        self.trig_hyst = 0.1 * self.trig_hyst_count
+        self.scopebar1_label_trig_hyst.setText(Utils.conv_num_str(self.trig_hyst) + 'V')
+        self.m2k.set_hyst_trig(0, self.trig_hyst)
+        self.m2k.set_hyst_trig(1, self.trig_hyst)
+
     def step_vdiv(self, ch, incr): # bool incr: increase or decrease
         if incr:
             if self.vdiv_index[ch] + 1 < len(self.vdivs):
@@ -461,10 +493,7 @@ class ScopeWidget():
             else:
                 self.offset_count[ch] -= 1
 
-        self.offset[ch] = self.vdivs[self.vdiv_index[ch]] * 0.1 * self.offset_count[ch]
-        self.scopebar1_label_offset[ch].setText(Utils.conv_num_str(self.offset[ch]) + 'V')
-        self.update_vdiv(ch)
-        self.m2k.set_offset_in(ch, self.offset[ch])
+        self.update_offset(ch)
 
     def step_hpos(self, incr=None):
         if incr != None:
@@ -473,12 +502,7 @@ class ScopeWidget():
             else:
                 self.hpos_count -= 1
 
-        self.hpos = self.tdivs[self.tdiv_index] / 5 * self.hpos_count
-        self.update_tdiv()
-        self.scopebar1_label_hpos.setText(Utils.conv_num_str(self.hpos) + 's')
-        if not self.running:
-            self.p1.setXRange(self.xrange[0] - self.hpos + self.stopped_hpos, self.xrange[1] - self.hpos + self.stopped_hpos, padding=0)
-            self.p1axb.setTickSpacing(levels=[(self.tdivs[self.tdiv_index] * self.xdiv / 2, -self.hpos + self.stopped_hpos), (self.tdivs[self.tdiv_index], -self.hpos + self.stopped_hpos)])
+        self.update_hpos()
 
     def step_trig_level(self, incr=None):
         if incr != None:
@@ -487,11 +511,7 @@ class ScopeWidget():
             else:
                 self.trig_level_count -= 1
 
-        self.trig_level = self.vdivs[self.vdiv_index[self.trig_src]] * 0.1 * self.trig_level_count
-        self.scopebar1_label_trig_level.setText(Utils.conv_num_str(self.trig_level) + 'V')
-        self.update_vtick()
-        self.m2k.set_level_trig(0, self.trig_level)
-        self.m2k.set_level_trig(1, self.trig_level)
+        self.update_trig_level()
 
     def step_holdoff(self, incr=None):
         if incr != None:
@@ -500,9 +520,7 @@ class ScopeWidget():
             elif self.holdoff_count > 0:
                 self.holdoff_count -= 1
 
-        self.holdoff = self.tdivs[self.tdiv_index] / 2 * self.holdoff_count
-        self.scopebar1_label_holdoff.setText(Utils.conv_num_str(self.holdoff) + 's')
-        self.m2k.set_holdoff_trig(int(self.timer_interval_ms + self.holdoff * 1000))
+        self.update_holdoff()
 
     def step_trig_hyst(self, incr=None):
         if incr != None:
@@ -511,10 +529,7 @@ class ScopeWidget():
             elif self.trig_hyst_count > 0:
                 self.trig_hyst_count -= 1
 
-        self.trig_hyst = 0.1 * self.trig_hyst_count
-        self.scopebar1_label_trig_hyst.setText(Utils.conv_num_str(self.trig_hyst) + 'V')
-        self.m2k.set_hyst_trig(0, self.trig_hyst)
-        self.m2k.set_hyst_trig(1, self.trig_hyst)
+        self.update_trig_hyst()
 
     def toggle_trig_src(self):
         self.set_trig_src(not self.trig_src)
