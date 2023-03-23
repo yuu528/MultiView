@@ -189,12 +189,15 @@ class ScopeWidget():
         self.scope_graph.ci.layout.itemAt(2, 1).setContentsMargins(self.TICK_SIZE / 2, self.TICK_SIZE / 2, self.TICK_SIZE / 2 + 1, self.TICK_SIZE / 2)
         self.p2.setGeometry(self.p1.vb.sceneBoundingRect())
 
-        # label settings
-        self.update_tdiv()
-        self.step_offset(0)
-        self.step_offset(1)
-        self.step_holdoff()
-        self.step_trig_hyst()
+        # calculate values
+        self.update_offset(0)
+        self.update_offset(1)
+        self.update_hpos()
+        self.update_trig_level()
+        self.update_holdoff()
+        self.update_trig_hyst()
+
+        # update
         self.set_trig_src()
         self.set_trig_mode()
         self.set_trig_cond()
