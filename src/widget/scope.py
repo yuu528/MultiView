@@ -163,6 +163,7 @@ class ScopeWidget():
         self.p2.addItem(self.p2c)
         self.p1.scene().addItem(self.p2)
         self.p2.setXLink(self.p1)
+        self.p1.vb.geometryChanged.connect(self.update_geometry)
 
         # beam finder
         self.p0axl = pg.AxisItem(orientation='left', showValues=False)
@@ -206,6 +207,9 @@ class ScopeWidget():
 
         # run
         self.m2k.acquired.connect(self.plot)
+
+    def update_geometry(self):
+        self.p2.setGeometry(self.p1.vb.sceneBoundingRect())
 
     def save(self):
         self.config['SCOPE']['vdiv_index0'] = str(self.vdiv_index[0])
@@ -323,7 +327,6 @@ class ScopeWidget():
         self.p1.setYRange(self.yrange[0][0] - self.offset[0], self.yrange[0][1] - self.offset[0], padding=0)
         self.p2.setYRange(self.yrange[1][0] - self.offset[1], self.yrange[1][1] - self.offset[1], padding=0)
         self.p1axl.setTickSpacing(levels=[(self.vdivs[self.vdiv_index[0]] * self.ydiv / 2, -self.offset[0]), (self.vdivs[self.vdiv_index[0]], -self.offset[0])])
-        self.p2.setGeometry(self.p1.vb.sceneBoundingRect())
 
     def update_tdiv(self):
         self.calc_numbers()
