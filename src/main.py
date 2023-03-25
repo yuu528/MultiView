@@ -26,7 +26,7 @@ class Main(QtWidgets.QWidget):
         self.mainbar_combo.currentIndexChanged.connect(self.change_mode)
 
         # connect to m2k
-        self.m2k = M2kWorker(1, 1000, rate_in=100e3)
+        self.m2k = M2kWorker(1, 1000, rate_in=1e6)
         if not self.m2k.ready:
             msg = QtWidgets.QMessageBox()
             msg.setWindowTitle('Error 01')
