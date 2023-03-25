@@ -32,7 +32,7 @@ class Main(QtWidgets.QWidget):
             msg.setWindowTitle('Error 01')
             msg.setIcon(QtWidgets.QMessageBox.Critical)
             msg.setStandardButtons(QtWidgets.QMessageBox.Close)
-            msg.setText('Error 01: Please check ADALM2000 connections.')
+            msg.setText(self.langs['error.1'])
             msg.exec_()
             exit()
 
