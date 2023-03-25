@@ -158,9 +158,9 @@ class ScopeWidget():
         self.p1axl = pg.AxisItem(orientation='left', showValues=False)
         self.p1axb = pg.AxisItem(orientation='bottom', showValues=False)
         self.p1 = self.scope_graph.addPlot(row=2, col=1, axisItems={'left': self.p1axl, 'bottom': self.p1axb})
-        self.p1c = self.p1.plot() # create PlotDataItem
+        self.p1c = self.p1.plot(skipFiniteCheck=True) # create PlotDataItem
         self.p2 = pg.ViewBox()
-        self.p2c = pg.PlotCurveItem()
+        self.p2c = pg.PlotCurveItem(skipFiniteCheck=True)
         self.p2.addItem(self.p2c)
         self.p1.scene().addItem(self.p2)
         self.p2.setXLink(self.p1)
