@@ -158,6 +158,7 @@ class ScopeWidget():
         self.p1axl = pg.AxisItem(orientation='left', showValues=False)
         self.p1axb = pg.AxisItem(orientation='bottom', showValues=False)
         self.p1 = self.scope_graph.addPlot(row=2, col=1, axisItems={'left': self.p1axl, 'bottom': self.p1axb})
+        self.p1c = self.p1.plot() # create PlotDataItem
         self.p2 = pg.ViewBox()
         self.p2c = pg.PlotCurveItem()
         self.p2.addItem(self.p2c)
@@ -267,7 +268,7 @@ class ScopeWidget():
             array = [np.array(data[0]), np.array(data[1])]
 
             if self.enable_ch[0]:
-                self.p1.plot(x=x, y=array[0], pen=self.colors[0], clear=True)
+                self.p1c.setData(x=x, y=array[0], pen=self.colors[0])
 
             if self.enable_ch[1]:
                 self.p2c.setData(x=x, y=array[1], pen=self.colors[1])
@@ -403,7 +404,8 @@ class ScopeWidget():
                 self.scopebar1_label_offset[ch].show()
             else:
                 if ch == 0:
-                    self.p1.clear()
+                    self.p1c.clear()
+                    self.p1.replot()
                 else:
                     self.p2c.clear()
                 self.vtick.removeTick(self.offset_tick[ch])
@@ -680,7 +682,7 @@ class ScopeWidget():
                 self.stop_acquisition()
         elif name == 'panel4_button':
             self.single_waiting = True
-            self.p1.clear()
+            self.p1c.clear()
             self.p2c.clear()
             self.scopebar1_label_trig_status.setStyleSheet('')
             self.run_acquisition()
