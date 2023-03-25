@@ -3,6 +3,7 @@ from PyQt5 import QtWidgets, uic
 from widget.scope import ScopeWidget
 import pyqtgraph as pg
 
+from langs import Langs
 from panel import Panel
 from worker.m2k import M2kWorker
 
@@ -11,7 +12,7 @@ class Main(QtWidgets.QWidget):
         super().__init__()
         uic.loadUi('./ui/main.ui', self)
 
-        self.lang = 'en'
+        self.langs = Langs('en').get_all()
 
         # get widget objects
         self.main_stacked = self.findChild(QtWidgets.QStackedWidget, 'main_stacked')
@@ -42,7 +43,7 @@ class Main(QtWidgets.QWidget):
 
         # get instances
         self.main_widget_ins = []
-        self.main_widget_ins.append(ScopeWidget(self, self.main_widget[0], self.panel, self.lang, self.m2k))
+        self.main_widget_ins.append(ScopeWidget(self, self.main_widget[0], self.panel, self.langs, self.m2k))
 
         self.send_control('show')
 

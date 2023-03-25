@@ -5,20 +5,18 @@ import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore
 
 from utils import Utils
-from langs import Langs
 
 class ScopeWidget():
-    def __init__(self, master, this, panel, lang, m2k):
+    def __init__(self, master, this, panel, langs, m2k):
         super().__init__()
         self.panel = panel
-        self.lang = lang
+        self.langs = langs
         self.m2k = m2k
 
         # const
         self.xdiv = 10
         self.ydiv = 8
         self.samplerate = self.m2k.rate_in
-        self.langs = Langs(lang).get_all()
         self.ENCODER_NONE = 0
         self.ENCODER_MEAS1 = 1
         self.ENCODER_MEAS2 = 2
