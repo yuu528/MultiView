@@ -26,15 +26,19 @@ class Main(QtWidgets.QWidget):
         self.mainbar_combo.currentIndexChanged.connect(self.change_mode)
 
         # connect to m2k
-        self.m2k = M2kWorker(1, 1000, rate_in=1e6)
-        if not self.m2k.ready:
-            msg = QtWidgets.QMessageBox()
-            msg.setWindowTitle('Error 01')
-            msg.setIcon(QtWidgets.QMessageBox.Critical)
-            msg.setStandardButtons(QtWidgets.QMessageBox.Close)
-            msg.setText(self.langs['error.1'])
-            msg.exec_()
-            exit()
+        while True:
+            self.m2k = M2kWorker(1, 1000, rate_in=1e6)
+            if self.m2k.ready:
+                break
+            else:
+                msg = QtWidgets.QMessageBox()
+                msg.setWindowTitle('Error 01')
+                msg.setIcon(QtWidgets.QMessageBox.Critical)
+                msg.setStandardButtons(QtWidgets.QMessageBox.Close | QtWidgets.QMessageBox.Retry)
+                msg.setText(self.langs['error.1'])
+                ret = msg.exec_()
+                if ret == QtWidgets.QMessageBox.Close:
+                    exit()
 
         self.m2k.start()
 
